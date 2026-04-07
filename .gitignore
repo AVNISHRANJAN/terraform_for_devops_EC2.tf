@@ -1,0 +1,17 @@
+# Private keys
+*.pem
+*.key
+id_rsa
+id_ed25519
+terra-automate-key*
+terra-automate-key.pub
+terra-automate-key
+
+# Terraform sensitive files
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+
+# Environment files
+.env
