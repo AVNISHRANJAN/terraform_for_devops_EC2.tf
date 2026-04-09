@@ -1,15 +1,11 @@
-# VARIABLE
-
-variable "instance_state" {
-  description = "EC2 instance state (running/stopped)"
-  type        = string
-  default     = "running"
-}
-
 # Key Pair
 resource "aws_key_pair" "my_key_pair" {
   key_name   = "tera_automate-key-pair"
   public_key = file("terra-automate-key.pub")
+
+  lifecycle {
+    ignore_changes = [public_key]
+  }
 }
 
 # Default VPC
@@ -17,7 +13,7 @@ resource "aws_default_vpc" "default" {}
 
 # Security Group
 resource "aws_security_group" "my_security_group" {
-  name_prefix = "tera-security-group-"
+  name_prefix = "tera-auto-server-1"
   vpc_id      = aws_default_vpc.default.id
 }
 
@@ -39,30 +35,31 @@ resource "aws_vpc_security_group_ingress_rule" "allow_ssh" {
   ip_protocol       = "tcp"
 }
 
-# Egress
+# Egress - Allow All
 resource "aws_vpc_security_group_egress_rule" "allow_all" {
   security_group_id = aws_security_group.my_security_group.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1"
 }
-  
-# EC2 Instances (3)
+
+# EC2 Instances
 resource "aws_instance" "my_instance" {
-  count                  = 1
-  ami                    = "ami-0c3389a4fa5bddaad"
+  for_each = var.instances
+
+  ami                    = each.value.ami
   instance_type          = "t3.micro"
   key_name               = aws_key_pair.my_key_pair.key_name
   vpc_security_group_ids = [aws_security_group.my_security_group.id]
 
   tags = {
-    Name = "tera-auto-server-${count.index}"
+    Name = each.key
   }
 }
 
 # INSTANCE STATE CONTROL
 
 resource "aws_ec2_instance_state" "stop_start" {
-  count       = 1
-  instance_id = aws_instance.my_instance[count.index].id
+  for_each = var.instances
+  instance_id = aws_instance.my_instance[each.key].id
   state       = "stopped"
 }
