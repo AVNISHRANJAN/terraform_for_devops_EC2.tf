@@ -1,17 +1,25 @@
-# Private keys
+# Sensitive keys
 *.pem
 *.key
 id_rsa
 id_ed25519
-terra-automate-key*
-terra-automate-key.pub
-terra-automate-key
+**/terra-automate-key
+**/terra-automate-key.pub
+**/terra-automate-key*
 
-# Terraform sensitive files
+# Terraform local and state files
+**/.terraform/
+**/.terraform.lock.hcl
 *.tfstate
-*.tfstate.backup
-.terraform/
-.terraform.lock.hcl
+*.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
 
-# Environment files
+# Local environment files
 .env
+.codex
+.DS_Store

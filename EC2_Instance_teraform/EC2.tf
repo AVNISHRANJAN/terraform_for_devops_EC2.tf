@@ -9,7 +9,7 @@ variable "instance_state" {
 # Key Pair
 resource "aws_key_pair" "my_key_pair" {
   key_name   = "tera_automate-key-pair"
-  public_key = file("terra-automate-key.pub") 
+  public_key = file("terra-automate-key.pub")
 }
 
 # Default VPC
@@ -45,7 +45,7 @@ resource "aws_vpc_security_group_egress_rule" "allow_all" {
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1"
 }
-
+  
 # EC2 Instances (3)
 resource "aws_instance" "my_instance" {
   count                  = 1
